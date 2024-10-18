@@ -1,0 +1,71 @@
+import java.util.*;
+
+public class SubsetGenerator {
+    // Iterative approach using binary numbers
+    public static List<List<Integer>> generateSubsetsIterative(int[] nums) {
+        List<List<Integer>> subsets = new ArrayList<>();
+        int n = nums.length;
+        
+        // Total number of subsets will be 2^n
+        int totalSubsets = 1 << n;
+        
+        // Generate each subset using binary representation
+        for (int i = 0; i < totalSubsets; i++) {
+            List<Integer> currentSubset = new ArrayList<>();
+            
+            // Check each bit position
+            for (int j = 0; j < n; j++) {
+                // If jth bit is set in i, include jth element
+                if ((i & (1 << j)) != 0) {
+                    currentSubset.add(nums[j]);
+                }
+            }
+            subsets.add(currentSubset);
+        }
+        
+        return subsets;
+    }
+    
+    // Recursive approach using backtracking
+    public static List<List<Integer>> generateSubsetsRecursive(int[] nums) {
+        List<List<Integer>> subsets = new ArrayList<>();
+        generateSubsetsHelper(nums, 0, new ArrayList<>(), subsets);
+        return subsets;
+    }
+    
+    private static void generateSubsetsHelper(int[] nums, int index, 
+                                            List<Integer> current, 
+                                            List<List<Integer>> subsets) {
+        // Add the current subset to result
+        subsets.add(new ArrayList<>(current));
+        
+        // Try including elements from index onwards
+        for (int i = index; i < nums.length; i++) {
+            // Include current element
+            current.add(nums[i]);
+            
+            // Recurse for remaining elements
+            generateSubsetsHelper(nums, i + 1, current, subsets);
+            
+            // Backtrack by removing the current element
+            current.remove(current.size() - 1);
+        }
+    }
+    
+    // Main method with example usage
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        
+        System.out.println("Using Iterative Approach:");
+        List<List<Integer>> subsetsIterative = generateSubsetsIterative(nums);
+        for (List<Integer> subset : subsetsIterative) {
+            System.out.println(subset);
+        }
+        
+        System.out.println("\nUsing Recursive Approach:");
+        List<List<Integer>> subsetsRecursive = generateSubsetsRecursive(nums);
+        for (List<Integer> subset : subsetsRecursive) {
+            System.out.println(subset);
+        }
+    }
+}
