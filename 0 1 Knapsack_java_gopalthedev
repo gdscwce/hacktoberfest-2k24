@@ -1,0 +1,142 @@
+public class KnapsackProblem {
+    /**
+     * Dynamic Programming Solution for 0/1 Knapsack
+     * Time Complexity: O(nW)
+     * Space Complexity: O(nW)
+     */
+    public static int knapsackDP(int[] weights, int[] values, int capacity) {
+        int n = weights.length;
+        int[][] dp = new int[n + 1][capacity + 1];
+        
+        // Build table dp[][] in bottom-up manner
+        for (int i = 0; i <= n; i++) {
+            for (int w = 0; w <= capacity; w++) {
+                if (i == 0 || w == 0) {
+                    dp[i][w] = 0;
+                }
+                else if (weights[i - 1] <= w) {
+                    dp[i][w] = Math.max(
+                        values[i - 1] + dp[i - 1][w - weights[i - 1]],
+                        dp[i - 1][w]
+                    );
+                }
+                else {
+                    dp[i][w] = dp[i - 1][w];
+                }
+            }
+        }
+        
+        // Store selected items
+        boolean[] selectedItems = new boolean[n];
+        int w = capacity;
+        int i = n;
+        
+        while (i > 0 && w > 0) {
+            if (dp[i][w] != dp[i - 1][w]) {
+                selectedItems[i - 1] = true;
+                w = w - weights[i - 1];
+            }
+            i--;
+        }
+        
+        // Print selected items
+        System.out.println("Selected items (index, weight, value):");
+        for (i = 0; i < n; i++) {
+            if (selectedItems[i]) {
+                System.out.printf("(%d, %d, %d)%n", i, weights[i], values[i]);
+            }
+        }
+        
+        return dp[n][capacity];
+    }
+    
+    /**
+     * Space-Optimized Dynamic Programming Solution
+     * Time Complexity: O(nW)
+     * Space Complexity: O(W)
+     */
+    public static int knapsackDPOptimized(int[] weights, int[] values, int capacity) {
+        int n = weights.length;
+        int[] dp = new int[capacity + 1];
+        
+        for (int i = 0; i < n; i++) {
+            for (int w = capacity; w >= weights[i]; w--) {
+                dp[w] = Math.max(dp[w], values[i] + dp[w - weights[i]]);
+            }
+        }
+        
+        return dp[capacity];
+    }
+    
+    /**
+     * Recursive Solution with Memoization
+     * Time Complexity: O(nW)
+     * Space Complexity: O(nW)
+     */
+    public static int knapsackRecursive(int[] weights, int[] values, int capacity) {
+        int n = weights.length;
+        Integer[][] memo = new Integer[n + 1][capacity + 1];
+        return knapsackRecursiveHelper(weights, values, capacity, n - 1, memo);
+    }
+    
+    private static int knapsackRecursiveHelper(int[] weights, int[] values, 
+                                             int capacity, int index, 
+                                             Integer[][] memo) {
+        // Base case
+        if (index < 0 || capacity == 0) {
+            return 0;
+        }
+        
+        // Check if already computed
+        if (memo[index][capacity] != null) {
+            return memo[index][capacity];
+        }
+        
+        // If weight of current item is more than capacity,
+        // skip this item
+        if (weights[index] > capacity) {
+            return memo[index][capacity] = knapsackRecursiveHelper(
+                weights, values, capacity, index - 1, memo
+            );
+        }
+        
+        // Return maximum of two cases:
+        // 1. Item included
+        // 2. Item not included
+        memo[index][capacity] = Math.max(
+            values[index] + knapsackRecursiveHelper(
+                weights, values, capacity - weights[index], index - 1, memo
+            ),
+            knapsackRecursiveHelper(weights, values, capacity, index - 1, memo)
+        );
+        
+        return memo[index][capacity];
+    }
+    
+    public static void main(String[] args) {
+        int[] values = {60, 100, 120};
+        int[] weights = {10, 20, 30};
+        int capacity = 50;
+        
+        System.out.println("Dynamic Programming Solution:");
+        int maxValueDP = knapsackDP(weights, values, capacity);
+        System.out.println("Maximum value: " + maxValueDP);
+        
+        System.out.println("\nSpace-Optimized DP Solution:");
+        int maxValueDPOpt = knapsackDPOptimized(weights, values, capacity);
+        System.out.println("Maximum value: " + maxValueDPOpt);
+        
+        System.out.println("\nRecursive Solution with Memoization:");
+        int maxValueRec = knapsackRecursive(weights, values, capacity);
+        System.out.println("Maximum value: " + maxValueRec);
+        
+        // Additional test case
+        int[] values2 = {10, 40, 30, 50};
+        int[] weights2 = {5, 4, 6, 3};
+        int capacity2 = 10;
+        
+        System.out.println("\nTest Case 2 - Dynamic Programming Solution:");
+        maxValueDP = knapsackDP(weights2, values2, capacity2);
+        System.out.println("Maximum value: " + maxValueDP);
+    }
+}
