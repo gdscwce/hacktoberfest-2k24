@@ -1,0 +1,29 @@
+# Making the node
+class Node:
+  def __init__(self):
+    self.val = val
+    self.left = None
+    self.right = None
+
+# INORDER TRAVERSAL -> Left, Root, Right
+def inorder_traversal(root):
+  if root:
+    inorder_traversal(root.left)
+    print(root.val,end=' ')  # To show the sequence/output on how the tree is being printed
+    inorder_traversal(root.right)
+
+# PREORDER TRAVERSAL -> Root, Left, Right
+def preorder_traversal(root):
+  if root:
+    print(root.val, end=' ')
+    preorder_traversal(root.left)
+    preorder_traversal(root.right)
+
+# POSTORDER TRAVERSAL -> Left, Right, Root
+defpostorder_traversal(root):
+  if root:
+    postorder_traversal(root.left)
+    postorder_traversal(root.right)
+    print(root.val, end=' ')
+
+# Feel free to give examples to make changes here and make a PR!
