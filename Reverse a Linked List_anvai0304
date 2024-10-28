@@ -1,0 +1,21 @@
+# I will use iterative approach
+# I will make a listnode class
+
+class listNode:
+  def __init__(self, val = 0, next = None):
+    self.val = val
+    self.next = next
+
+# Now, reversing the linked list
+def reverse_ll(head):
+  prev = None
+  curr = head
+
+  while curr:
+    new_node = curr.next 
+    curr.next = prev   # Changing pointers
+    prev = curr 
+    curr = new_node
+
+  return prev
+  
